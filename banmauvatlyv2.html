@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SGK Vật Lí 12 - Bài 1: Cấu trúc của chất. Sự chuyển thể</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lexend:wght@600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        /* =========================================
+           1. BIẾN TOÀN CỤC & RESET
+           ========================================= */
+        :root {
+            --navy-dark:  #0f2042; 
+            --blue-brand: #1a4f9c; 
+            --blue-mid:   #3b82f6; 
+            --blue-light: #eff6ff; 
+            --gold-accent:#fbbf24;
+            --text-main:  #334155;
+            --text-muted: #64748b; 
+            --border-subtle: #e2e8f0;
+            --white:      #ffffff;
+            --correct-bg: #dcfce7;
+            --correct-br: #22c55e;
+            --wrong-bg:   #fee2e2;
+            --wrong-br:   #ef4444;
+        }
+
+        body {
+            background-color: #e2e8f0; 
+            padding: 40px 0;
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            color: var(--text-main);
+        }
+
+        /* =========================================
+           2. BỐ CỤC TRANG & IN ẤN
+           ========================================= */
+        .document-page {
+            width: 210mm;
+            min-height: 297mm;
+            margin: 0 auto 30px auto;
+            background-color: var(--white);
+            box-shadow: 0 15px 35px rgba(15, 32, 66, 0.15);
+            padding: 20mm 18mm 25mm 18mm; 
+            position: relative;
+            box-sizing: border-box;
+            overflow: visible; 
+            page-break-after: always;
+            z-index: 1;
+        }
+
+        .document-page::after {
+            content: "Designed by Codelo.io.vn";
+            position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            font-size: 5rem; font-family: 'Lexend', sans-serif;
+            font-weight: 800; color: rgba(15, 32, 66, 0.03); 
+            white-space: nowrap; pointer-events: none; 
+            user-select: none; z-index: 999; 
+        }
+
+        /* =========================================
+           3. THÀNH PHẦN NỘI DUNG (UI COMPONENTS)
+           ========================================= */
+        .lesson-banner {
+            background: linear-gradient(135deg, var(--navy-dark) 0%, var(--blue-brand) 100%);
+            color: var(--white); padding: 24px 28px; 
+            border-radius: 12px; margin-bottom: 24px;
+            position: relative; z-index: 2;
+            box-shadow: 0 10px 20px rgba(26, 79, 156, 0.15);
+        }
+        .chapter-badge {
+            font-family: 'Lexend', sans-serif; background-color: rgba(255, 255, 255, 0.15);
+            color: #93c5fd; padding: 4px 12px; border-radius: 30px; font-size: 0.75rem;
+            text-transform: uppercase; letter-spacing: 1.5px; display: inline-block; margin-bottom: 8px;
+        }
+        .lesson-title { font-family: 'Lexend', sans-serif; margin: 0; font-size: 1.7rem; font-weight: 800; line-height: 1.3; }
+
+        .section-badge {
+            font-family: 'Lexend', sans-serif; font-size: 1.25rem; font-weight: 800; color: var(--navy-dark);
+            margin: 24px 0 14px 0; display: flex; align-items: center; z-index: 2; position: relative;
+        }
+        .section-badge::before {
+            content: ""; display: inline-block; width: 5px; height: 20px;
+            background: linear-gradient(to bottom, var(--blue-mid), var(--blue-brand));
+            border-radius: 4px; margin-right: 12px;
+        }
+
+        .paragraph { font-size: 1.05rem; line-height: 1.6; text-align: justify; margin-bottom: 12px; position: relative; z-index: 2; }
+
+        .focus-box { background: var(--blue-light); border-radius: 10px; padding: 16px 20px; margin-bottom: 20px; border: 1px solid #dbeafe; position: relative; z-index: 2; }
+        .focus-box-title { font-family: 'Lexend', sans-serif; color: var(--blue-brand); font-weight: 700; font-size: 1rem; margin-bottom: 6px; }
+
+        .smart-word { color: var(--blue-brand); font-weight: 600; cursor: pointer; border-bottom: 1.5px dashed #93c5fd; transition: all 0.2s ease; position: relative; }
+        .smart-word:hover { color: var(--navy-dark); background-color: #f8fafc; border-bottom-style: solid; }
+        .smart-panel {
+            display: none; margin-top: 8px; margin-bottom: 12px; padding: 12px 16px; border-radius: 8px; 
+            background: #f8fafc; border-left: 4px solid var(--blue-mid); border: 1px solid var(--border-subtle);
+            font-size: 0.95rem; color: var(--text-main); animation: slideDown 0.3s ease;
+        }
+        .smart-panel::before { content: '📌 Chú giải: '; font-weight: 700; color: var(--blue-brand); }
+
+        .data-map-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 14px 0; position: relative; z-index: 2; }
+        .data-card { background: #f8fafc; border: 1px solid var(--border-subtle); border-radius: 8px; padding: 12px 14px; page-break-inside: avoid; }
+        .data-tag { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--blue-mid); }
+        .data-main { font-family: 'Lexend', sans-serif; font-size: 1.05rem; font-weight: 800; color: var(--navy-dark); margin: 2px 0 4px 0; }
+        .data-sub { font-size: 0.8rem; color: var(--text-muted); margin: 0; line-height: 1.4; }
+
+        .visual-frame { background-color: var(--blue-light); border: 2px dashed #bfdbfe; border-radius: 12px; height: 100%; min-height: 240px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; text-align: center; position: relative; z-index: 2; }
+
+        .content-module { background: #fff; border: 1px solid var(--border-subtle); border-radius: 10px; padding: 16px; margin-bottom: 12px; position: relative; z-index: 2; page-break-inside: avoid; }
+        .module-accent { font-family: 'Lexend', sans-serif; font-weight: 700; color: var(--blue-brand); font-size: 1.05rem; margin-bottom: 6px; }
+
+        .modern-table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 0.95rem; position: relative; z-index: 2; page-break-inside: avoid; }
+        .modern-table th { background-color: var(--blue-light); color: var(--navy-dark); font-weight: 700; padding: 10px 14px; text-align: left; border-bottom: 2px solid #cbd5e1; }
+        .modern-table td { padding: 10px 14px; border-bottom: 1px solid var(--border-subtle); vertical-align: top; }
+
+        .diagram-box { background: #f8fafc; border: 1px dashed #93c5fd; border-radius: 12px; padding: 16px; margin: 20px 0; position: relative; z-index: 2; text-align: center; page-break-inside: avoid; }
+        .diagram-title { font-family: 'Lexend', sans-serif; font-size: 0.95rem; color: var(--blue-brand); font-weight: 700; margin-bottom: 15px; text-transform: uppercase; }
+        .diagram-flow { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }
+        .flow-node { background: white; border: 1.5px solid var(--blue-mid); border-radius: 8px; padding: 10px; flex: 1; font-weight: 600; font-size: 0.85rem; color: var(--navy-dark); box-shadow: 0 2px 4px rgba(59, 130, 246, 0.1); min-width: 100px; }
+        .flow-sub { display: block; font-size: 0.7rem; color: var(--text-muted); font-weight: 400; margin-top: 4px; }
+        .flow-arrow { display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 0.7rem; color: var(--blue-brand); font-weight: bold; min-width: 60px; }
+
+        /* =========================================
+           4. TRẮC NGHIỆM ĐA LỰA CHỌN & ĐÚNG SAI
+           ========================================= */
+        .mcq-container { margin-bottom: 20px; position: relative; z-index: 2; page-break-inside: avoid; }
+        .question-text { font-weight: 600; color: var(--navy-dark); font-size: 1.05rem; margin-bottom: 12px; }
+        .question-text .q-num { color: var(--blue-brand); font-family: 'Lexend', sans-serif; font-weight: 800; margin-right: 5px; }
+        .options-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+        .option-item { background-color: #f8fafc; border: 1px solid var(--border-subtle); border-radius: 8px; padding: 10px 14px; font-size: 0.95rem; cursor: pointer; transition: all 0.2s; position: relative; }
+        .option-item:hover { border-color: var(--blue-mid); background-color: var(--blue-light); }
+        .option-item.selected { background-color: #e0f2fe; border-color: #0284c7; box-shadow: 0 0 0 1px #0284c7; }
+        .opt-char { font-weight: 700; color: var(--blue-brand); margin-right: 8px; }
+
+        body.submitted .option-item.correct-ans { background-color: var(--correct-bg) !important; border-color: var(--correct-br) !important; box-shadow: 0 0 0 1px var(--correct-br) !important; color: #166534; }
+        body.submitted .option-item.wrong-ans { background-color: var(--wrong-bg) !important; border-color: var(--wrong-br) !important; box-shadow: 0 0 0 1px var(--wrong-br) !important; color: #991b1b; }
+
+        .answer-box { display: none; margin-top: 10px; padding: 14px 18px; border-radius: 8px; font-size: 0.9rem; background: #f8fafc; border: 1px solid #cbd5e1; color: var(--text-main); border-left: 4px solid var(--blue-brand); }
+        .answer-box.show { display: block; animation: slideDown 0.3s ease-in-out; }
+        .ans-label { font-weight: 700; color: var(--blue-brand); font-family: 'Lexend', sans-serif; }
+
+        .tf-card { border: 1px solid var(--border-subtle); border-radius: 10px; margin-bottom: 20px; overflow: hidden; background: #fff; position: relative; z-index: 2; page-break-inside: avoid; }
+        .tf-header { background-color: var(--blue-light); padding: 12px 16px; border-bottom: 1px solid var(--border-subtle); font-weight: 600; color: var(--navy-dark); font-size: 1rem; }
+        .tf-table { width: 100%; border-collapse: collapse; }
+        .tf-table th { font-size: 0.8rem; text-transform: uppercase; color: var(--text-muted); padding: 10px; text-align: center; border-bottom: 1px solid var(--border-subtle); }
+        .tf-table td { padding: 10px 16px; border-bottom: 1px solid var(--border-subtle); vertical-align: middle; font-size: 0.95rem; }
+        .tf-table td:nth-child(2), .tf-table td:nth-child(3) { text-align: center; width: 70px; border-left: 1px solid var(--border-subtle); }
+        .tf-table tr:last-child td { border-bottom: none; }
+        
+        .check-circle { display: inline-block; width: 22px; height: 22px; border: 2px solid #cbd5e1; border-radius: 50%; transition: 0.2s; cursor: pointer; }
+        .check-circle.ticked { background-color: var(--blue-mid); border-color: #1d4ed8; }
+        body.submitted .check-circle.ticked.correct-tf { background-color: var(--correct-br); border-color: #166534; }
+        body.submitted .check-circle.ticked.wrong-tf { background-color: var(--wrong-br); border-color: #991b1b; }
+        body.submitted .check-circle.missed-tf { border: 3px solid var(--correct-br); background-color: transparent; }
+
+        /* =========================================
+           5. BÀI TẬP TỰ LUẬN TÍNH TOÁN
+           ========================================= */
+        .essay-container { margin-bottom: 25px; page-break-inside: avoid; }
+        .essay-question { font-size: 1.05rem; color: var(--navy-dark); margin-bottom: 15px; font-weight: 500; }
+        
+        .writing-lines {
+            display: none; 
+            width: 100%; height: 200px;
+            background-image: repeating-linear-gradient(transparent, transparent 31px, #94a3b8 31px, #94a3b8 32px);
+            margin-top: 20px; opacity: 0.6;
+        }
+
+        /* Nút Xem lời giải ĐÃ BỎ ICON */
+        .btn-reveal {
+            background: #eff6ff; color: #1a4f9c; border: 1px solid #bfdbfe;
+            padding: 8px 18px; border-radius: 30px; font-size: 0.85rem; font-weight: 700;
+            cursor: pointer; display: inline-flex; align-items: center; gap: 8px;
+            transition: all 0.2s ease; font-family: 'Lexend', sans-serif; margin-bottom: 10px;
+        }
+        .btn-reveal:hover { background: #dbeafe; transform: translateY(-2px); }
+
+        .essay-solution-box {
+            background: #f8fafc; border: 1px solid var(--border-subtle); border-radius: 8px;
+            padding: 20px; position: relative; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+            display: none; 
+        }
+        .essay-solution-box.show { display: block !important; animation: slideDown 0.3s ease; }
+        
+        .solution-title {
+            font-family: 'Lexend', sans-serif; font-size: 0.9rem; font-weight: 700;
+            color: var(--blue-brand); text-transform: uppercase; margin-bottom: 12px;
+            display: flex; align-items: center; gap: 6px;
+        }
+        
+        .math-line { margin-bottom: 10px; font-family: 'Times New Roman', serif; font-size: 1.15rem; color: #1e293b; }
+        .math-result { font-weight: bold; color: #b91c1c; }
+        .math-text { font-family: 'Inter', sans-serif; font-size: 0.95rem; color: #475569; font-style: italic; margin-bottom: 5px; }
+
+        /* Controls Trắc nghiệm */
+        .quiz-controls { display: flex; justify-content: center; align-items: center; flex-direction: column; gap: 15px; margin-top: 30px; padding-top: 25px; border-top: 2px dashed #cbd5e1; position: relative; z-index: 2; }
+        .btn-group-custom { display: flex; gap: 15px; }
+        .btn-custom { font-family: 'Lexend', sans-serif; font-size: 0.95rem; font-weight: 700; padding: 12px 28px; border-radius: 30px; cursor: pointer; transition: all 0.3s ease; text-transform: uppercase; letter-spacing: 0.5px; }
+        .btn-submit { background: linear-gradient(135deg, var(--blue-brand) 0%, var(--blue-mid) 100%); color: white; border: none; box-shadow: 0 6px 15px rgba(26, 79, 156, 0.25); }
+        .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(26, 79, 156, 0.35); }
+        .btn-reset { background: white; color: var(--blue-brand); border: 2px solid var(--blue-brand); }
+        .btn-reset:hover { background: var(--blue-light); transform: translateY(-2px); }
+
+        #score-board { display: none; background: #fff; border: 2px solid var(--correct-br); border-radius: 12px; padding: 20px; text-align: center; box-shadow: 0 10px 25px rgba(34, 197, 94, 0.15); width: 100%; max-width: 400px; }
+        #score-board h3 { margin: 0 0 10px 0; color: #166534; font-family: 'Lexend', sans-serif; font-size: 1.4rem; }
+        #score-number { font-size: 2.5rem; font-weight: 800; color: var(--correct-br); }
+
+        .page-footer { position: absolute; bottom: 12mm; left: 18mm; right: 18mm; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-subtle); padding-top: 10px; font-size: 0.85rem; color: var(--text-muted); z-index: 2; }
+        .page-num { font-family: 'Lexend', sans-serif; font-weight: 800; color: var(--blue-brand); }
+
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* ====== LOGIC ẨN/HIỆN CHO BẢN IN ====== */
+        @media print {
+            @page { size: A4; margin: 0mm; }
+            body { background-color: white; margin: 0; padding: 0; print-color-adjust: exact !important; -webkit-print-color-adjust: exact !important; }
+            .document-page { box-shadow: none !important; margin: 0; padding: 12mm 15mm 15mm 15mm !important; height: auto !important; min-height: auto !important; overflow: visible !important; page-break-after: always; page-break-inside: auto !important; }
+            .document-page:last-of-type { page-break-after: auto !important; }
+            
+            .no-print, .smart-panel, .answer-box, .quiz-controls, .essay-solution-box, .btn-reveal { display: none !important; }
+            .writing-lines { display: block !important; } 
+            
+            .smart-word { color: inherit; border: none; font-weight: normal; }
+            .options-grid { gap: 6px; }
+            .mcq-container { margin-bottom: 12px; }
+            .page-footer { position: relative; bottom: 0; margin-top: 25px; left: 0; right: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="document-page">
+        <header class="lesson-banner">
+            <span class="chapter-badge">Chương 1: Vật lí nhiệt</span>
+            <h1 class="lesson-title">BÀI 1: CẤU TRÚC CỦA CHẤT. SỰ CHUYỂN THỂ</h1>
+        </header>
+
+        <div class="focus-box">
+            <div class="focus-box-title">Mục tiêu bài học:</div>
+            <p class="paragraph mb-0 text-secondary small">
+                Trình bày được mô hình động học phân tử; Nêu được cấu trúc của các thể rắn, lỏng, khí; Giải thích được sự chuyển thể của các chất (nóng chảy, hóa hơi, thăng hoa) và áp dụng công thức tính các loại nhiệt lượng.
+            </p>
+        </div>
+
+        <h2 class="section-badge">1. Mô hình động học phân tử</h2>
+        
+        <p class="paragraph">
+            Vật chất được cấu tạo từ các hạt riêng biệt là phân tử, nguyên tử. Các phân tử <span class="smart-word no-print" onclick="toggleElem('tip-chuyendong')">chuyển động nhiệt</span><span class="d-none d-print-inline">chuyển động nhiệt</span> không ngừng. Nhiệt độ của vật càng cao thì tốc độ chuyển động nhiệt của các phân tử càng lớn. Giữa các phân tử luôn tồn tại <span class="smart-word no-print" onclick="toggleElem('tip-tuongtac')">lực tương tác</span><span class="d-none d-print-inline">lực tương tác</span> (bao gồm cả lực hút và lực đẩy).
+        </p>
+        <div id="tip-chuyendong" class="smart-panel no-print">Sự chuyển động hỗn loạn không ngừng của các phân tử được gọi là chuyển động nhiệt. Động năng trung bình của chúng tỉ lệ thuận với nhiệt độ tuyệt đối của vật.</div>
+        <div id="tip-tuongtac" class="smart-panel no-print">Lực tương tác phân tử phụ thuộc vào khoảng cách. Khi khoảng cách quá nhỏ, lực đẩy chiếm ưu thế. Khi khoảng cách lớn, lực hút chiếm ưu thế.</div>
+        
+        <p class="paragraph fw-medium text-dark mb-2 mt-3">Đặc điểm cấu trúc của 3 thể cơ bản:</p>
+        <div class="data-map-grid">
+            <div class="data-card"><span class="data-tag">Thể Rắn</span><div class="data-main">Liên kết cực mạnh</div><p class="data-sub">Khoảng cách rất nhỏ. Dao động quanh vị trí cân bằng cố định. Hình dạng và thể tích xác định.</p></div>
+            <div class="data-card"><span class="data-tag">Thể Lỏng</span><div class="data-main">Liên kết vừa</div><p class="data-sub">Khoảng cách xa hơn. Dao động quanh vị trí cân bằng nhưng có thể trượt lên nhau. Thể tích xác định, hình dạng phụ thuộc bình chứa.</p></div>
+            <div class="data-card"><span class="data-tag">Thể Khí</span><div class="data-main">Liên kết rất yếu</div><p class="data-sub">Khoảng cách cực lớn. Chuyển động hỗn loạn về mọi phía. Không có hình dạng và thể tích xác định (chiếm toàn bộ bình chứa).</p></div>
+        </div>
+
+        <div class="visual-frame mt-4">
+            <svg viewBox="0 0 240 100" width="100%" height="120" stroke="#1a4f9c" stroke-width="1.5" fill="none">
+                <rect x="10" y="25" width="50" height="50" rx="4" fill="#dbeafe" stroke="#3b82f6" />
+                <circle cx="20" cy="35" r="3" fill="#1e3a8a" /><circle cx="35" cy="35" r="3" fill="#1e3a8a" /><circle cx="50" cy="35" r="3" fill="#1e3a8a" />
+                <circle cx="20" cy="50" r="3" fill="#1e3a8a" /><circle cx="35" cy="50" r="3" fill="#1e3a8a" /><circle cx="50" cy="50" r="3" fill="#1e3a8a" />
+                <circle cx="20" cy="65" r="3" fill="#1e3a8a" /><circle cx="35" cy="65" r="3" fill="#1e3a8a" /><circle cx="50" cy="65" r="3" fill="#1e3a8a" />
+                <text x="35" y="95" font-size="12" text-anchor="middle" font-family="Lexend" fill="#0f2042" font-weight="bold">RẮN</text>
+                
+                <path d="M 70 50 L 85 50" stroke="#93c5fd" stroke-width="2" />
+
+                <path d="M 95 25 L 145 25 L 145 75 L 95 75 Z" fill="#eff6ff" stroke="#3b82f6" stroke-dasharray="2" />
+                <circle cx="105" cy="40" r="3" fill="#2563eb" /><circle cx="125" cy="30" r="3" fill="#2563eb" /><circle cx="135" cy="45" r="3" fill="#2563eb" />
+                <circle cx="115" cy="60" r="3" fill="#2563eb" /><circle cx="130" cy="65" r="3" fill="#2563eb" /><circle cx="100" cy="65" r="3" fill="#2563eb" />
+                <text x="120" y="95" font-size="12" text-anchor="middle" font-family="Lexend" fill="#0f2042" font-weight="bold">LỎNG</text>
+                
+                <path d="M 155 50 L 170 50" stroke="#93c5fd" stroke-width="2" />
+
+                <path d="M 180 25 L 230 25 L 230 75 L 180 75 Z" fill="none" stroke="#94a3b8" stroke-dasharray="4" />
+                <circle cx="190" cy="35" r="3" fill="#0f2042" /><path d="M 190 35 L 200 30" stroke="#0f2042" stroke-width="1" />
+                <circle cx="215" cy="45" r="3" fill="#0f2042" /><path d="M 215 45 L 205 55" stroke="#0f2042" stroke-width="1" />
+                <circle cx="195" cy="65" r="3" fill="#0f2042" /><path d="M 195 65 L 185 70" stroke="#0f2042" stroke-width="1" />
+                <text x="205" y="95" font-size="12" text-anchor="middle" font-family="Lexend" fill="#0f2042" font-weight="bold">KHÍ</text>
+            </svg>
+        </div>
+
+        <footer class="page-footer"><span>Vật lí 12 — CT GDPT 2018</span><span class="page-num">1</span></footer>
+    </div>
+
+
+    <div class="document-page">
+        <h2 class="section-badge">2. Sự chuyển thể của các chất</h2>
+        <div class="content-module mt-2">
+            <h3 class="module-accent">a. Các quá trình chuyển thể</h3>
+            <p class="paragraph mb-2 small">Sự chuyển từ thể này sang thể khác của các chất gọi là sự chuyển thể. Trong suốt thời gian diễn ra quá trình chuyển thể (nóng chảy, đông đặc, sôi), nhiệt độ của vật chất <strong>không thay đổi</strong> dù ta có tiếp tục cung cấp nhiệt lượng.</p>
+            
+            <table class="modern-table mt-2">
+                <thead><tr><th style="width: 35%">Quá trình</th><th style="width: 65%">Đặc điểm & Khái niệm</th></tr></thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Nóng chảy / Đông đặc</strong></td>
+                        <td>Chuyển từ Rắn ↔ Lỏng. Mỗi chất kết tinh có một nhiệt độ nóng chảy xác định (phụ thuộc áp suất bên ngoài).</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Sự bay hơi</strong></td>
+                        <td>Chuyển từ Lỏng → Khí xảy ra <strong>chỉ ở bề mặt thoáng</strong> của chất lỏng. Quá trình này có thể xảy ra ở bất kỳ nhiệt độ nào.</td>
+                    </tr>
+                    <tr class="no-print"><td colspan="2" style="padding: 0; border: none; background: #f8fafc;">
+                        <ul class="mb-1 mt-1 small" style="color: #475569;">
+                            <li><em>Tốc độ bay hơi phụ thuộc 4 yếu tố:</em> Nhiệt độ, diện tích mặt thoáng, áp suất (gió) và bản chất của chất lỏng.</li>
+                            <li>Sự bay hơi là quá trình <strong>thu nhiệt</strong>, làm lạnh môi trường xung quanh nó.</li>
+                        </ul>
+                    </td></tr>
+                    <tr>
+                        <td><strong>Sự sôi</strong></td>
+                        <td>Sự hóa hơi đặc biệt, xảy ra ở cả <strong>bên trong và trên bề mặt</strong> khối lỏng. Xảy ra ở một nhiệt độ sôi xác định.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Thăng hoa / Ngưng kết</strong></td>
+                        <td>Chuyển <strong>trực tiếp</strong> từ Rắn ↔ Khí mà không hề qua thể lỏng (VD: Nước đá khô, băng phiến).</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="diagram-box no-print mt-3 mb-4">
+            <div class="diagram-title">Sơ đồ chuyển động qua lại giữa các thể</div>
+            <div class="diagram-flow">
+                <div class="flow-node">THỂ RẮN<br><span style="font-weight:normal; font-size: 0.75rem; color:#64748b;">(Nước đá)</span></div>
+                <div class="flow-arrow">
+                    <span>Nóng chảy →</span>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                    <span>← Đông đặc</span>
+                </div>
+                <div class="flow-node">THỂ LỎNG<br><span style="font-weight:normal; font-size: 0.75rem; color:#64748b;">(Nước lỏng)</span></div>
+                <div class="flow-arrow">
+                    <span>Hóa hơi (sôi) →</span>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                    <span>← Ngưng tụ</span>
+                </div>
+                <div class="flow-node">THỂ KHÍ<br><span style="font-weight:normal; font-size: 0.75rem; color:#64748b;">(Hơi nước)</span></div>
+            </div>
+            <div class="mt-2 text-muted" style="font-size: 0.8rem; font-style: italic;">* Quá trình đi từ trái sang phải là quá trình Thu nhiệt (cần cấp nhiệt). Quá trình từ phải sang trái là Tỏa nhiệt.</div>
+        </div>
+
+        <h3 class="module-accent mt-4" style="font-size: 1.1rem;">b. Công thức tính nhiệt lượng</h3>
+        <div class="focus-box" style="background: #f8fafc; border-color: #cbd5e1; padding: 12px 20px;">
+            <ul class="mb-0 text-dark" style="font-size: 0.95rem; line-height: 1.6;">
+                <li><strong>1. Nhiệt lượng thu vào/tỏa ra khi vật thay đổi nhiệt độ:</strong> <code>Q = m.c.Δt</code><br> 
+                    <span style="font-size: 0.85rem; color: #64748b;">(m: khối lượng (kg), c: nhiệt dung riêng (J/kg.K), Δt: độ biến thiên nhiệt độ)</span>
+                </li>
+                <li class="mt-2"><strong>2. Nhiệt lượng làm vật nóng chảy hoàn toàn:</strong> <code>Q = λ.m</code><br>
+                    <span style="font-size: 0.85rem; color: #64748b;">(λ (lambda): nhiệt nóng chảy riêng của chất rắn, đơn vị J/kg)</span>
+                </li>
+                <li class="mt-2"><strong>3. Nhiệt lượng làm vật hóa hơi hoàn toàn (sôi):</strong> <code>Q = L.m</code><br>
+                    <span style="font-size: 0.85rem; color: #64748b;">(L: nhiệt hóa hơi riêng của chất lỏng, đơn vị J/kg)</span>
+                </li>
+            </ul>
+        </div>
+
+        <footer class="page-footer"><span>Vật lí 12 — CT GDPT 2018</span><span class="page-num">2</span></footer>
+    </div>
+
+
+    <div class="document-page">
+        
+        <h2 class="section-badge mt-2">PHẦN LUYỆN TẬP</h2>
+        <div class="module-accent mb-3" style="font-size: 1.1rem;">I. Trắc nghiệm nhiều lựa chọn</div>
+
+        <div class="mcq-container">
+            <div class="question-text"><span class="q-num">Câu 1.</span> Theo mô hình động học phân tử, khi nhiệt độ của vật tăng thì:</div>
+            <div class="options-grid">
+                <div class="option-item" onclick="selectOpt(this)" data-ans="true"><span class="opt-char">A.</span> Chuyển động nhiệt của phân tử nhanh lên.</div>
+                <div class="option-item" onclick="selectOpt(this)"><span class="opt-char">B.</span> Khoảng cách giữa các phân tử giảm đi.</div>
+                <div class="option-item" onclick="selectOpt(this)"><span class="opt-char">C.</span> Lực tương tác phân tử tăng lên.</div>
+                <div class="option-item" onclick="selectOpt(this)"><span class="opt-char">D.</span> Kích thước phân tử tăng lên.</div>
+            </div>
+            <div class="answer-box"><span class="ans-label">Giải thích:</span> Nhiệt độ là thước đo động năng trung bình. Nhiệt độ tăng thì tốc độ chuyển động nhiệt tăng, phân tử chuyển động hỗn loạn nhanh hơn.</div>
+        </div>
+
+        <div class="mcq-container">
+            <div class="question-text"><span class="q-num">Câu 2.</span> Đối với chất kết tinh, trong suốt quá trình nóng chảy thì:</div>
+            <div class="options-grid">
+                <div class="option-item" onclick="selectOpt(this)"><span class="opt-char">A.</span> Nhiệt độ của vật liên tục tăng.</div>
+                <div class="option-item" onclick="selectOpt(this)" data-ans="true"><span class="opt-char">B.</span> Nhiệt độ của vật không thay đổi.</div>
+                <div class="option-item" onclick="selectOpt(this)"><span class="opt-char">C.</span> Lực tương tác phân tử không đổi.</div>
+                <div class="option-item" onclick="selectOpt(this)"><span class="opt-char">D.</span> Động năng phân tử giảm dần.</div>
+            </div>
+            <div class="answer-box"><span class="ans-label">Giải thích:</span> Suốt thời gian nóng chảy, nhiệt lượng cung cấp chuyển hóa thành thế năng để phá vỡ mạng tinh thể, nên động năng trung bình (nhiệt độ) không thay đổi.</div>
+        </div>
+
+        <div class="mcq-container">
+            <div class="question-text"><span class="q-num">Câu 3.</span> Sự bay hơi của một chất lỏng có đặc điểm nào sau đây?</div>
+            <div class="options-grid">
+                <div class="option-item" onclick="selectOpt(this)"><span class="opt-char">A.</span> Chỉ xảy ra ở một nhiệt độ sôi xác định.</div>
+                <div class="option-item" onclick="selectOpt(this)" data-ans="true"><span class="opt-char">B.</span> Xảy ra ở mọi nhiệt độ nhưng chỉ trên bề mặt mặt thoáng.</div>
+                <div class="option-item" onclick="selectOpt(this)"><span class="opt-char">C.</span> Là quá trình chất lỏng tỏa nhiệt ra môi trường.</div>
+                <div class="option-item" onclick="selectOpt(this)"><span class="opt-char">D.</span> Xảy ra ở cả bên trong và trên bề mặt khối chất lỏng.</div>
+            </div>
+            <div class="answer-box"><span class="ans-label">Giải thích:</span> Bay hơi xảy ra ở mọi nhiệt độ, thu nhiệt của môi trường và chỉ diễn ra ở lớp bề mặt. Sự sôi mới là xảy ra ở cả bên trong lòng chất lỏng.</div>
+        </div>
+
+        <div class="mcq-container">
+            <div class="question-text"><span class="q-num">Câu 4.</span> Quá trình chuyển trực tiếp từ thể rắn sang thể khí (không qua thể lỏng) được gọi là:</div>
+            <div class="options-grid">
+                <div class="option-item" onclick="selectOpt(this)"><span class="opt-char">A.</span> Nóng chảy.</div>
+                <div class="option-item" onclick="selectOpt(this)"><span class="opt-char">B.</span> Hóa hơi.</div>
+                <div class="option-item" onclick="selectOpt(this)" data-ans="true"><span class="opt-char">C.</span> Thăng hoa.</div>
+                <div class="option-item" onclick="selectOpt(this)"><span class="opt-char">D.</span> Ngưng kết.</div>
+            </div>
+            <div class="answer-box"><span class="ans-label">Giải thích:</span> Sự thăng hoa là quá trình vật chất chuyển từ trạng thái rắn sang khí một cách trực tiếp. Ví dụ thường gặp là nước đá khô (CO2 rắn) thăng hoa thành khí.</div>
+        </div>
+
+        <footer class="page-footer"><span>Vật lí 12 — CT GDPT 2018</span><span class="page-num">3</span></footer>
+    </div>
+
+
+    <div class="document-page">
+        
+        <div class="mcq-container mt-2">
+            <div class="question-text"><span class="q-num">Câu 5.</span> Đâu KHÔNG phải là yếu tố làm thay đổi tốc độ bay hơi của một chất lỏng?</div>
+            <div class="options-grid">
+                <div class="option-item" onclick="selectOpt(this)"><span class="opt-char">A.</span> Nhiệt độ môi trường.</div>
+                <div class="option-item" onclick="selectOpt(this)"><span class="opt-char">B.</span> Diện tích mặt thoáng của chất lỏng.</div>
+                <div class="option-item" onclick="selectOpt(this)" data-ans="true"><span class="opt-char">C.</span> Khối lượng của chất lỏng trong bình.</div>
+                <div class="option-item" onclick="selectOpt(this)"><span class="opt-char">D.</span> Gió (áp suất khí trên mặt thoáng).</div>
+            </div>
+            <div class="answer-box"><span class="ans-label">Giải thích:</span> Tốc độ bay hơi phụ thuộc vào Nhiệt độ, Gió, Diện tích mặt thoáng và bản chất chất lỏng. Khối lượng hoặc thể tích chất lỏng không ảnh hưởng đến tốc độ bay hơi.</div>
+        </div>
+
+        <div class="mcq-container">
+            <div class="question-text"><span class="q-num">Câu 6.</span> Khi tăng áp suất chất quyển trên mặt thoáng của một chất lỏng thì nhiệt độ sôi của chất lỏng đó sẽ:</div>
+            <div class="options-grid">
+                <div class="option-item" onclick="selectOpt(this)" data-ans="true"><span class="opt-char">A.</span> Tăng lên.</div>
+                <div class="option-item" onclick="selectOpt(this)"><span class="opt-char">B.</span> Giảm đi.</div>
+                <div class="option-item" onclick="selectOpt(this)"><span class="opt-char">C.</span> Không thay đổi.</div>
+                <div class="option-item" onclick="selectOpt(this)"><span class="opt-char">D.</span> Lúc đầu tăng, sau đó giảm.</div>
+            </div>
+            <div class="answer-box"><span class="ans-label">Giải thích:</span> Nhiệt độ sôi phụ thuộc rất lớn vào áp suất. Áp suất càng cao thì các phân tử càng khó thoát ra khỏi bề mặt chất lỏng, do đó cần nhiệt độ cao hơn để sôi (VD: Nồi áp suất).</div>
+        </div>
+
+        <div class="module-accent mb-3 mt-4" style="font-size: 1.1rem;">II. Trắc nghiệm Đúng / Sai</div>
+        
+        <div class="tf-card" id="tf-q1">
+            <div class="tf-header"><span class="q-num" style="color:#1a4f9c; font-weight:800;">Câu 1.</span> Xét cấu trúc phân tử và các thể của chất:</div>
+            <div class="answer-box" style="margin:0; border-radius:0; border-bottom: 1px solid var(--border-subtle); border-left:none;">
+                <span class="ans-label">Phân tích:</span> a-Đúng, b-Đúng, c-Sai (Khí chuyển động hỗn loạn không ngừng), d-Đúng.
+            </div>
+            <table class="tf-table">
+                <thead><tr><th style="text-align:left;">Nhận định</th><th>Đúng</th><th>Sai</th></tr></thead>
+                <tbody>
+                    <tr data-ans="true">
+                        <td><strong>a)</strong> Ở thể rắn, lực tương tác giữa các phân tử rất mạnh, giữ cho chúng dao động quanh vị trí cân bằng cố định.</td>
+                        <td><span class="check-circle" onclick="toggleTFCircle(this, 'true')"></span></td>
+                        <td><span class="check-circle" onclick="toggleTFCircle(this, 'false')"></span></td>
+                    </tr>
+                    <tr data-ans="true">
+                        <td><strong>b)</strong> Chất lỏng có thể tích xác định nhưng không có hình dạng xác định.</td>
+                        <td><span class="check-circle" onclick="toggleTFCircle(this, 'true')"></span></td>
+                        <td><span class="check-circle" onclick="toggleTFCircle(this, 'false')"></span></td>
+                    </tr>
+                    <tr data-ans="false">
+                        <td><strong>c)</strong> Các phân tử khí sẽ đứng yên hoàn toàn khi được đặt trong bình kín không có tác động từ bên ngoài.</td>
+                        <td><span class="check-circle" onclick="toggleTFCircle(this, 'true')"></span></td>
+                        <td><span class="check-circle" onclick="toggleTFCircle(this, 'false')"></span></td>
+                    </tr>
+                    <tr data-ans="true">
+                        <td><strong>d)</strong> Thể tích của lượng khí phụ thuộc hoàn toàn vào thể tích của bình chứa nó.</td>
+                        <td><span class="check-circle" onclick="toggleTFCircle(this, 'true')"></span></td>
+                        <td><span class="check-circle" onclick="toggleTFCircle(this, 'false')"></span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <footer class="page-footer"><span>Vật lí 12 — CT GDPT 2018</span><span class="page-num">4</span></footer>
+    </div>
+
+
+    <div class="document-page">
+
+        <div class="tf-card mt-2" id="tf-q2">
+            <div class="tf-header"><span class="q-num" style="color:#1a4f9c; font-weight:800;">Câu 2.</span> Phân tích đồ thị nhiệt độ - thời gian của một khối nước đá (đang ở -10°C) được đun nóng liên tục đến khi sôi:</div>
+            <div class="answer-box" style="margin:0; border-radius:0; border-bottom: 1px solid var(--border-subtle); border-left:none;">
+                <span class="ans-label">Phân tích:</span> a-Sai (Chỉ nằm ngang trong quá trình chuyển thể), b-Đúng (Đá tan), c-Đúng (Không đổi), d-Sai (Giai đoạn sôi cũng thu nhiệt lượng rất lớn Q=Lm).
+            </div>
+            <table class="tf-table">
+                <thead><tr><th style="text-align:left;">Nhận định</th><th>Đúng</th><th>Sai</th></tr></thead>
+                <tbody>
+                    <tr data-ans="false">
+                        <td><strong>a)</strong> Đường biểu diễn nhiệt độ theo thời gian của khối nước này luôn là một đường thẳng nằm ngang.</td>
+                        <td><span class="check-circle" onclick="toggleTFCircle(this, 'true')"></span></td>
+                        <td><span class="check-circle" onclick="toggleTFCircle(this, 'false')"></span></td>
+                    </tr>
+                    <tr data-ans="true">
+                        <td><strong>b)</strong> Giai đoạn đồ thị nằm ngang ở mốc 0°C tương ứng với quá trình nước đá đang nóng chảy.</td>
+                        <td><span class="check-circle" onclick="toggleTFCircle(this, 'true')"></span></td>
+                        <td><span class="check-circle" onclick="toggleTFCircle(this, 'false')"></span></td>
+                    </tr>
+                    <tr data-ans="true">
+                        <td><strong>c)</strong> Tại giai đoạn nước đang sôi ở 100°C, động năng trung bình của các phân tử nước không thay đổi.</td>
+                        <td><span class="check-circle" onclick="toggleTFCircle(this, 'true')"></span></td>
+                        <td><span class="check-circle" onclick="toggleTFCircle(this, 'false')"></span></td>
+                    </tr>
+                    <tr data-ans="false">
+                        <td><strong>d)</strong> Trong giai đoạn nước đang sôi, khối nước không cần thu thêm nhiệt lượng từ bếp đun.</td>
+                        <td><span class="check-circle" onclick="toggleTFCircle(this, 'true')"></span></td>
+                        <td><span class="check-circle" onclick="toggleTFCircle(this, 'false')"></span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="tf-card" id="tf-q3">
+            <div class="tf-header"><span class="q-num" style="color:#1a4f9c; font-weight:800;">Câu 3.</span> So sánh sự bay hơi và sự sôi của một chất lỏng:</div>
+            <div class="answer-box" style="margin:0; border-radius:0; border-bottom: 1px solid var(--border-subtle); border-left:none;">
+                <span class="ans-label">Phân tích:</span> a-Đúng (Đều là từ lỏng sang khí), b-Đúng, c-Sai (Sôi xảy ra ở cả bên trong khối lỏng), d-Sai (Nhiệt độ sôi giữ nguyên dù có đun tiếp).
+            </div>
+            <table class="tf-table">
+                <thead><tr><th style="text-align:left;">Nhận định</th><th>Đúng</th><th>Sai</th></tr></thead>
+                <tbody>
+                    <tr data-ans="true">
+                        <td><strong>a)</strong> Điểm chung của cả hai quá trình này là đều thuộc sự hóa hơi (chuyển từ lỏng sang khí).</td>
+                        <td><span class="check-circle" onclick="toggleTFCircle(this, 'true')"></span></td>
+                        <td><span class="check-circle" onclick="toggleTFCircle(this, 'false')"></span></td>
+                    </tr>
+                    <tr data-ans="true">
+                        <td><strong>b)</strong> Sự bay hơi xảy ra ở mọi nhiệt độ, trong khi sự sôi chỉ xảy ra ở một nhiệt độ xác định đối với mỗi chất.</td>
+                        <td><span class="check-circle" onclick="toggleTFCircle(this, 'true')"></span></td>
+                        <td><span class="check-circle" onclick="toggleTFCircle(this, 'false')"></span></td>
+                    </tr>
+                    <tr data-ans="false">
+                        <td><strong>c)</strong> Sự sôi cũng chỉ xảy ra trên bề mặt mặt thoáng của khối chất lỏng giống như sự bay hơi.</td>
+                        <td><span class="check-circle" onclick="toggleTFCircle(this, 'true')"></span></td>
+                        <td><span class="check-circle" onclick="toggleTFCircle(this, 'false')"></span></td>
+                    </tr>
+                    <tr data-ans="false">
+                        <td><strong>d)</strong> Khi chất lỏng đã đạt đến nhiệt độ sôi, nếu tăng lửa bếp thì nhiệt độ chất lỏng sẽ tiếp tục tăng.</td>
+                        <td><span class="check-circle" onclick="toggleTFCircle(this, 'true')"></span></td>
+                        <td><span class="check-circle" onclick="toggleTFCircle(this, 'false')"></span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="quiz-controls no-print mt-4 mb-3" style="border-top: none; padding-top:0;">
+            <div id="score-board">
+                <h3>ĐIỂM TRẮC NGHIỆM</h3>
+                <div id="score-number">0/18</div>
+            </div>
+            <div class="btn-group-custom">
+                <button class="btn-custom btn-submit" onclick="submitQuiz()">Hoàn thành phần Trắc nghiệm</button>
+            </div>
+        </div>
+
+        <footer class="page-footer"><span>Vật lí 12 — CT GDPT 2018</span><span class="page-num">5</span></footer>
+    </div>
+
+
+    <div class="document-page">
+        <h3 class="module-accent mb-4 mt-2" style="font-size: 1.1rem;">III. Bài tập Tự luận (Vận dụng)</h3>
+
+        <div class="essay-container">
+            <div class="essay-question">
+                <span class="q-num" style="color: #1a4f9c; font-family: 'Lexend', sans-serif; font-weight: 800;">Bài 1.</span> 
+                Dựa vào kiến thức về sự chuyển thể, hãy giải thích tại sao khi bước từ dưới hồ bơi lên bờ có gió thổi, ta lại cảm thấy rất lạnh (kể cả khi nhiệt độ không khí bên ngoài không thấp)?
+            </div>
+            
+            <div class="writing-lines" style="height: 120px;"></div>
+            
+            <button class="btn-reveal no-print" onclick="toggleElem('essay-ans-1')">Xem lời giải chi tiết</button>
+            
+            <div id="essay-ans-1" class="essay-solution-box no-print">
+                <div class="solution-title">BÀI GIẢI CHI TIẾT</div>
+                <div class="math-text text-dark">
+                    - Khi ta bước lên bờ, nước đọng trên bề mặt da sẽ bắt đầu quá trình <strong>bay hơi</strong> vào không khí.<br>
+                    - Quá trình bay hơi là quá trình <strong>thu nhiệt</strong>. Nước lấy nhiệt lượng từ chính cơ thể chúng ta để hóa hơi, làm nhiệt độ bề mặt da giảm xuống nhanh chóng.<br>
+                    - Khi có <strong>gió thổi</strong>, tốc độ bay hơi của nước càng diễn ra mãnh liệt hơn. Do đó, cơ thể bị mất nhiệt với tốc độ nhanh hơn, khiến hệ thần kinh cảm nhận được sự lạnh giá rõ rệt.
+                </div>
+            </div>
+        </div>
+
+        <div class="essay-container mt-4">
+            <div class="essay-question">
+                <span class="q-num" style="color: #1a4f9c; font-family: 'Lexend', sans-serif; font-weight: 800;">Bài 2.</span> 
+                Cần cung cấp một nhiệt lượng bao nhiêu để làm nóng chảy hoàn toàn 2,5 kg nước đá ở nhiệt độ -10°C thành nước lỏng ở 0°C? <br>
+                <span style="font-size: 0.9rem; color: #475569; font-weight: normal; display: block; margin-top: 5px;">
+                    Biết nhiệt dung riêng của nước đá là c = 2100 J/(kg.K); nhiệt nóng chảy riêng của nước đá là λ = 3,4.10⁵ J/kg.
+                </span>
+            </div>
+            
+            <div class="writing-lines" style="height: 250px;"></div>
+            
+            <button class="btn-reveal no-print" onclick="toggleElem('essay-ans-2')">Xem lời giải chi tiết</button>
+            
+            <div id="essay-ans-2" class="essay-solution-box no-print">
+                <div class="solution-title">BÀI GIẢI CHI TIẾT</div>
+                
+                <div class="math-text">Nhiệt lượng cần thiết để khối nước đá tăng nhiệt độ từ -10°C lên đến nhiệt độ nóng chảy 0°C:</div>
+                <div class="math-line">Q<sub>1</sub> = m.c.Δt = 2,5 × 2100 × (0 - (-10)) = 52 500 (J)</div>
+                
+                <div class="math-text">Nhiệt lượng cần thiết để khối nước đá nóng chảy hoàn toàn (không đổi nhiệt độ ở 0°C):</div>
+                <div class="math-line">Q<sub>2</sub> = λ.m = 3,4.10<sup>5</sup> × 2,5 = 850 000 (J)</div>
+                
+                <div class="math-text">Tổng nhiệt lượng cần cung cấp cho toàn bộ quá trình:</div>
+                <div class="math-line">Q = Q<sub>1</sub> + Q<sub>2</sub> = 52 500 + 850 000 = <span class="math-result">902 500 (J)</span> = 902,5 (kJ)</div>
+            </div>
+        </div>
+
+        <footer class="page-footer"><span>Vật lí 12 — CT GDPT 2018</span><span class="page-num">6</span></footer>
+    </div>
+
+
+    <div class="document-page">
+        
+        <div class="essay-container mt-2">
+            <div class="essay-question">
+                <span class="q-num" style="color: #1a4f9c; font-family: 'Lexend', sans-serif; font-weight: 800;">Bài 3.</span> 
+                Một ấm điện công suất P = 1500W được dùng để đun sôi 1,5 lít nước ban đầu ở 25°C. Cho biết nhiệt dung riêng của nước là c = 4200 J/(kg.K), nhiệt hóa hơi riêng của nước là L = 2,3.10⁶ J/kg, khối lượng riêng của nước là D = 1 kg/lít. Bỏ qua sự mất mát nhiệt ra môi trường. 
+                <br>a) Tính thời gian cần thiết để nước bắt đầu sôi.
+                <br>b) Tính thời gian để đun cạn hoàn toàn ấm nước đó kể từ lúc bắt đầu sôi.
+            </div>
+            
+            <div class="writing-lines" style="height: 280px;"></div>
+            
+            <button class="btn-reveal no-print" onclick="toggleElem('essay-ans-3')">Xem lời giải chi tiết</button>
+            
+            <div id="essay-ans-3" class="essay-solution-box no-print">
+                <div class="solution-title">BÀI GIẢI CHI TIẾT</div>
+                
+                <div class="math-text">Khối lượng của lượng nước cần đun: m = V.D = 1,5 (kg)</div>
+                <br>
+                <strong style="color: #0f2042;">a) Thời gian để nước bắt đầu sôi (từ 25°C lên 100°C):</strong>
+                <div class="math-text mt-2">Nhiệt lượng cần cung cấp để khối nước đạt đến 100°C:</div>
+                <div class="math-line">Q<sub>thu</sub> = m.c.Δt = 1,5 × 4200 × (100 - 25) = 472 500 (J)</div>
+                
+                <div class="math-text">Nhiệt lượng do ấm cung cấp: Q<sub>tỏa</sub> = P.t<sub>1</sub>. Áp dụng bảo toàn năng lượng:</div>
+                <div class="math-line">P.t<sub>1</sub> = Q<sub>thu</sub>  ⇒  1500 × t<sub>1</sub> = 472 500</div>
+                <div class="math-line">⇒ t<sub>1</sub> = 472 500 / 1500 = <span class="math-result">315 (giây)</span> = 5 phút 15 giây.</div>
+                
+                <br>
+                <strong style="color: #0f2042;">b) Thời gian để đun cạn hoàn toàn (hóa hơi ở 100°C):</strong>
+                <div class="math-text mt-2">Nhiệt lượng cần thiết để hóa hơi hoàn toàn khối nước 1,5 kg ở 100°C:</div>
+                <div class="math-line">Q<sub>hóa_hơi</sub> = L.m = 2,3.10<sup>6</sup> × 1,5 = 3 450 000 (J)</div>
+                
+                <div class="math-text">Thời gian đun cạn ấm:</div>
+                <div class="math-line">P.t<sub>2</sub> = Q<sub>hóa_hơi</sub>  ⇒  t<sub>2</sub> = 3 450 000 / 1500 = <span class="math-result">2300 (giây)</span> ≈ 38,3 phút.</div>
+            </div>
+        </div>
+
+        <div class="essay-container mt-5">
+            <div class="essay-question">
+                <span class="q-num" style="color: #1a4f9c; font-family: 'Lexend', sans-serif; font-weight: 800;">Bài 4.</span> 
+                Tính tổng nhiệt lượng cần thiết để biến 100g nước đá từ nhiệt độ -20°C thành hơi nước hoàn toàn ở nhiệt độ 100°C. <br>
+                <span style="font-size: 0.9rem; color: #475569; font-weight: normal; display: block; margin-top: 5px;">
+                    Cho biết: Nhiệt dung riêng của nước đá c<sub>1</sub> = 2100 J/(kg.K); Nhiệt dung riêng của nước c<sub>2</sub> = 4200 J/(kg.K); Nhiệt nóng chảy riêng của đá λ = 340.10³ J/kg; Nhiệt hóa hơi của nước L = 2,26.10⁶ J/kg.
+                </span>
+            </div>
+            
+            <div class="writing-lines" style="height: 300px;"></div>
+            
+            <button class="btn-reveal no-print" onclick="toggleElem('essay-ans-4')">Xem lời giải chi tiết</button>
+            
+            <div id="essay-ans-4" class="essay-solution-box no-print">
+                <div class="solution-title">BÀI GIẢI CHI TIẾT</div>
+                
+                <div class="math-text">Đổi đơn vị khối lượng: m = 100g = 0,1 kg. Quá trình gồm 4 giai đoạn:</div>
+                
+                <div class="math-text mt-2">1) Đun đá từ -20°C đến 0°C:</div>
+                <div class="math-line">Q<sub>1</sub> = m.c<sub>1</sub>.Δt = 0,1 × 2100 × (0 - (-20)) = 4 200 (J)</div>
+                
+                <div class="math-text">2) Làm đá nóng chảy hoàn toàn ở 0°C:</div>
+                <div class="math-line">Q<sub>2</sub> = λ.m = 340.10<sup>3</sup> × 0,1 = 34 000 (J)</div>
+                
+                <div class="math-text">3) Đun nước lỏng từ 0°C lên 100°C:</div>
+                <div class="math-line">Q<sub>3</sub> = m.c<sub>2</sub>.Δt = 0,1 × 4200 × (100 - 0) = 42 000 (J)</div>
+                
+                <div class="math-text">4) Nước hóa hơi hoàn toàn ở 100°C:</div>
+                <div class="math-line">Q<sub>4</sub> = L.m = 2,26.10<sup>6</sup> × 0,1 = 226 000 (J)</div>
+                
+                <div class="math-text">Tổng nhiệt lượng cần cung cấp:</div>
+                <div class="math-line">Q = Q<sub>1</sub> + Q<sub>2</sub> + Q<sub>3</sub> + Q<sub>4</sub> = 4 200 + 34 000 + 42 000 + 226 000 = <span class="math-result">306 200 (J)</span></div>
+            </div>
+        </div>
+
+        <footer class="page-footer"><span>Vật lí 12 — CT GDPT 2018</span><span class="page-num">7</span></footer>
+    </div>
+
+    <script>
+        function toggleElem(id) {
+            const el = document.getElementById(id);
+            if (el.classList.contains('show')) {
+                el.classList.remove('show');
+                setTimeout(() => { if(!el.classList.contains('show')) el.style.display = 'none'; }, 300);
+            } else {
+                el.style.display = 'block'; void el.offsetWidth; el.classList.add('show');
+            }
+        }
+
+        function selectOpt(element) {
+            if (document.body.classList.contains('submitted')) return;
+            let siblings = element.parentNode.querySelectorAll('.option-item');
+            siblings.forEach(sib => sib.classList.remove('selected'));
+            element.classList.add('selected');
+        }
+
+        function toggleTFCircle(element, type) {
+            if (document.body.classList.contains('submitted')) return;
+            let rowCells = element.closest('tr').querySelectorAll('.check-circle');
+            rowCells.forEach(cell => { cell.classList.remove('ticked'); cell.dataset.selected = ""; });
+            element.classList.add('ticked');
+            element.dataset.selected = type;
+        }
+
+        function submitQuiz() {
+            if (document.body.classList.contains('submitted')) return;
+            document.body.classList.add('submitted');
+            let score = 0; let totalScore = 18; // 6 MCQ + 12 TF rows
+
+            document.querySelectorAll('.mcq-container').forEach(container => {
+                let selected = container.querySelector('.option-item.selected');
+                let correctOpt = container.querySelector('.option-item[data-ans="true"]');
+                
+                if (selected) {
+                    if (selected === correctOpt) { selected.classList.add('correct-ans'); score++; } 
+                    else {
+                        selected.classList.add('wrong-ans');
+                        if (correctOpt) correctOpt.classList.add('correct-ans');
+                    }
+                } else if (correctOpt) { correctOpt.classList.add('correct-ans'); }
+            });
+
+            document.querySelectorAll('.tf-table tbody tr').forEach(row => {
+                let correctAnswer = row.getAttribute('data-ans'); 
+                let trueCircle = row.querySelector('td:nth-child(2) .check-circle');
+                let falseCircle = row.querySelector('td:nth-child(3) .check-circle');
+                let selectedCircle = row.querySelector('.check-circle.ticked');
+                
+                if (selectedCircle) {
+                    if (selectedCircle.dataset.selected === correctAnswer) { selectedCircle.classList.add('correct-tf'); score++; } 
+                    else {
+                        selectedCircle.classList.add('wrong-tf');
+                        if (correctAnswer === 'true') trueCircle.classList.add('missed-tf');
+                        if (correctAnswer === 'false') falseCircle.classList.add('missed-tf');
+                    }
+                } else {
+                    if (correctAnswer === 'true') trueCircle.classList.add('missed-tf');
+                    if (correctAnswer === 'false') falseCircle.classList.add('missed-tf');
+                }
+            });
+
+            document.querySelectorAll('.answer-box').forEach(box => {
+                box.style.display = 'block'; void box.offsetWidth; box.classList.add('show');
+            });
+
+            document.getElementById('score-number').innerText = score + '/' + totalScore;
+            let sb = document.getElementById('score-board');
+            sb.style.display = 'block'; void sb.offsetWidth;
+        }
+    </script>
+</body>
+</html>
